@@ -1,8 +1,6 @@
-// app/page.tsx
-
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function Home() {
@@ -14,6 +12,14 @@ export default function Home() {
   const [startingCoins, setStartingCoins] = useState(1000)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    const path = window.location.pathname
+    const parts = path.split('/')
+    if (parts[1] === 'room' && parts[2]) {
+      setRoomId(parts[2])
+    }
+  }, [])
 
   async function createRoom() {
     if (!hostName.trim()) return setError('Enter your name!')
@@ -63,28 +69,61 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-green-950 flex items-center justify-center p-4">
+    <main
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        background: 'radial-gradient(ellipse at top, #1a0a2e 0%, #0d0d0d 60%, #0a0a0a 100%)',
+        fontFamily: "'Georgia', serif",
+      }}
+    >
       <div className="w-full max-w-md space-y-6">
 
         {/* Title */}
-        <div className="text-center">
-          <h1 className="text-5xl font-bold text-yellow-400 drop-shadow-lg">🃏 Teen Patti</h1>
-          <p className="text-green-300 mt-2 text-sm">Multiplayer Card Game</p>
+        <div className="text-center space-y-2">
+          <div className="flex justify-center gap-4 text-4xl mb-2">
+            <span>♠</span>
+            <span style={{ color: '#dc2626' }}>♥</span>
+            <span style={{ color: '#dc2626' }}>♦</span>
+            <span>♣</span>
+          </div>
+          <h1
+            className="text-5xl font-bold tracking-wide"
+            style={{ color: '#FFD700', textShadow: '0 0 30px #FFD70066' }}
+          >
+            Teen Patti
+          </h1>
+          <p className="text-sm tracking-widest uppercase" style={{ color: '#8B6914' }}>
+            Multiplayer Card Game
+          </p>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-2 rounded-lg text-sm text-center">
+          <div
+            className="px-4 py-3 rounded-xl text-sm text-center"
+            style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.4)', color: '#fca5a5' }}
+          >
             {error}
           </div>
         )}
 
         {/* Create Room */}
-        <div className="bg-green-900/60 border border-green-700 rounded-2xl p-6 space-y-4">
-          <h2 className="text-yellow-400 font-bold text-lg">🏠 Create Room</h2>
+        <div
+          className="rounded-2xl p-6 space-y-4"
+          style={{
+            background: 'linear-gradient(135deg, #1a1a2e, #16213e)',
+            border: '1px solid #8B6914',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          }}
+        >
+          <h2 className="font-bold text-lg" style={{ color: '#FFD700' }}>🏠 Create Room</h2>
 
           <input
-            className="w-full bg-green-800/50 border border-green-600 rounded-lg px-4 py-2 text-white placeholder-green-400 focus:outline-none focus:border-yellow-400"
+            className="w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 outline-none transition-all"
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(139,105,20,0.4)',
+            }}
             placeholder="Your name"
             value={hostName}
             onChange={(e) => setHostName(e.target.value)}
@@ -92,71 +131,102 @@ export default function Home() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-green-400 text-xs mb-1 block">Boot Amount</label>
+              <label className="text-xs uppercase tracking-widest block mb-1" style={{ color: '#8B6914' }}>
+                Boot Amount
+              </label>
               <select
-                className="w-full bg-green-800/50 border border-green-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-yellow-400"
+                className="w-full px-3 py-2 rounded-xl text-white outline-none"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(139,105,20,0.4)',
+                }}
                 value={bootAmount}
                 onChange={(e) => setBootAmount(Number(e.target.value))}
               >
-                <option value={5}>5 coins</option>
-                <option value={10}>10 coins</option>
-                <option value={25}>25 coins</option>
-                <option value={50}>50 coins</option>
+                <option value={5} style={{ background: '#1a1a2e' }}>5 coins</option>
+                <option value={10} style={{ background: '#1a1a2e' }}>10 coins</option>
+                <option value={25} style={{ background: '#1a1a2e' }}>25 coins</option>
+                <option value={50} style={{ background: '#1a1a2e' }}>50 coins</option>
               </select>
             </div>
             <div>
-              <label className="text-green-400 text-xs mb-1 block">Starting Coins</label>
+              <label className="text-xs uppercase tracking-widest block mb-1" style={{ color: '#8B6914' }}>
+                Starting Coins
+              </label>
               <select
-                className="w-full bg-green-800/50 border border-green-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-yellow-400"
+                className="w-full px-3 py-2 rounded-xl text-white outline-none"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(139,105,20,0.4)',
+                }}
                 value={startingCoins}
                 onChange={(e) => setStartingCoins(Number(e.target.value))}
               >
-                <option value={500}>500 coins</option>
-                <option value={1000}>1000 coins</option>
-                <option value={2000}>2000 coins</option>
-                <option value={5000}>5000 coins</option>
+                <option value={500} style={{ background: '#1a1a2e' }}>500 coins</option>
+                <option value={1000} style={{ background: '#1a1a2e' }}>1000 coins</option>
+                <option value={2000} style={{ background: '#1a1a2e' }}>2000 coins</option>
+                <option value={5000} style={{ background: '#1a1a2e' }}>5000 coins</option>
               </select>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={createRoom}
             disabled={loading}
-            className="w-full bg-yellow-400 hover:bg-yellow-300 text-green-950 font-bold py-3 rounded-xl transition disabled:opacity-50"
+            className="w-full py-3 rounded-xl font-bold text-black text-lg transition-all hover:opacity-90 disabled:opacity-50"
+            style={{ background: 'linear-gradient(135deg, #FFD700, #FFA500)' }}
           >
             {loading ? 'Creating...' : 'Create Room'}
           </button>
         </div>
 
         {/* Divider */}
-        <div className="flex items-center gap-3">
-          <div className="flex-1 h-px bg-green-700" />
-          <span className="text-green-500 text-sm">or</span>
-          <div className="flex-1 h-px bg-green-700" />
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px" style={{ background: 'rgba(139,105,20,0.3)' }} />
+          <span className="text-sm" style={{ color: '#8B6914' }}>or</span>
+          <div className="flex-1 h-px" style={{ background: 'rgba(139,105,20,0.3)' }} />
         </div>
 
         {/* Join Room */}
-        <div className="bg-green-900/60 border border-green-700 rounded-2xl p-6 space-y-4">
-          <h2 className="text-yellow-400 font-bold text-lg">🔗 Join Room</h2>
+        <div
+          className="rounded-2xl p-6 space-y-4"
+          style={{
+            background: 'linear-gradient(135deg, #1a1a2e, #16213e)',
+            border: '1px solid #8B6914',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          }}
+        >
+          <h2 className="font-bold text-lg" style={{ color: '#FFD700' }}>🔗 Join Room</h2>
 
           <input
-            className="w-full bg-green-800/50 border border-green-600 rounded-lg px-4 py-2 text-white placeholder-green-400 focus:outline-none focus:border-yellow-400"
+            className="w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 outline-none"
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(139,105,20,0.4)',
+            }}
             placeholder="Your name"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
           />
 
           <input
-            className="w-full bg-green-800/50 border border-green-600 rounded-lg px-4 py-2 text-white placeholder-green-400 focus:outline-none focus:border-yellow-400 uppercase"
+            className="w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 outline-none uppercase font-mono"
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(139,105,20,0.4)',
+            }}
             placeholder="Room code (e.g. AB12CD34)"
             value={roomId}
             onChange={(e) => setRoomId(e.target.value.toUpperCase())}
           />
 
           <button
+            type="button"
             onClick={joinRoom}
             disabled={loading}
-            className="w-full bg-green-500 hover:bg-green-400 text-white font-bold py-3 rounded-xl transition disabled:opacity-50"
+            className="w-full py-3 rounded-xl font-bold text-white text-lg transition-all hover:opacity-90 disabled:opacity-50"
+            style={{ background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)' }}
           >
             {loading ? 'Joining...' : 'Join Room'}
           </button>
