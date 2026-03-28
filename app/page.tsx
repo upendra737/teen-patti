@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 export default function Home() {
   const [hostName, setHostName] = useState('')
@@ -10,17 +10,6 @@ export default function Home() {
   const [startingCoins, setStartingCoins] = useState(1000)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [inviteRoomId, setInviteRoomId] = useState('')
-
-  useEffect(() => {
-    // Check if coming from an invite link /room/XXXXXXXX
-    const path = window.location.pathname
-    const parts = path.split('/')
-    if (parts[1] === 'room' && parts[2]) {
-      setInviteRoomId(parts[2])
-      setRoomId(parts[2])
-    }
-  }, [])
 
   async function createRoom() {
     if (!hostName.trim()) return setError('Enter your name!')
@@ -71,84 +60,6 @@ export default function Home() {
     setLoading(false)
   }
 
-  // If coming from invite link — show only join form
-  if (inviteRoomId) {
-    return (
-      <main
-        className="min-h-screen flex items-center justify-center p-4"
-        style={{
-          background: 'radial-gradient(ellipse at top, #1a0a2e 0%, #0d0d0d 60%, #0a0a0a 100%)',
-          fontFamily: "'Georgia', serif",
-        }}
-      >
-        <div className="w-full max-w-md space-y-6">
-          <div className="text-center space-y-2">
-            <div className="flex justify-center gap-4 text-4xl mb-2">
-              <span>♠</span>
-              <span style={{ color: '#dc2626' }}>♥</span>
-              <span style={{ color: '#dc2626' }}>♦</span>
-              <span>♣</span>
-            </div>
-            <h1 className="text-4xl font-bold" style={{ color: '#FFD700', textShadow: '0 0 30px #FFD70066' }}>
-              Teen Patti
-            </h1>
-            <p className="text-sm" style={{ color: '#8B6914' }}>You&apos;ve been invited to join a game!</p>
-          </div>
-
-          {error && (
-            <div
-              className="px-4 py-3 rounded-xl text-sm text-center"
-              style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.4)', color: '#fca5a5' }}
-            >
-              {error}
-            </div>
-          )}
-
-          <div
-            className="rounded-2xl p-6 space-y-4"
-            style={{
-              background: 'linear-gradient(135deg, #1a1a2e, #16213e)',
-              border: '2px solid #FFD700',
-              boxShadow: '0 0 40px rgba(255,215,0,0.1)',
-            }}
-          >
-            <h2 className="font-bold text-lg text-center" style={{ color: '#FFD700' }}>
-              🔗 Join Room
-            </h2>
-            <div
-              className="rounded-lg px-4 py-2 text-center text-sm font-mono"
-              style={{ background: 'rgba(255,215,0,0.05)', border: '1px solid rgba(255,215,0,0.2)', color: '#FFD700' }}
-            >
-              Room: {inviteRoomId}
-            </div>
-            <input
-              className="w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 outline-none"
-              style={{
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(139,105,20,0.4)',
-              }}
-              placeholder="Enter your name"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && joinRoom()}
-              autoFocus
-            />
-            <button
-              type="button"
-              onClick={joinRoom}
-              disabled={loading}
-              className="w-full py-3 rounded-xl font-bold text-black text-lg transition-all hover:opacity-90 disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, #FFD700, #FFA500)' }}
-            >
-              {loading ? 'Joining...' : '🚀 Join Game'}
-            </button>
-          </div>
-        </div>
-      </main>
-    )
-  }
-
-  // Normal home page
   return (
     <main
       className="min-h-screen flex items-center justify-center p-4"
@@ -159,6 +70,7 @@ export default function Home() {
     >
       <div className="w-full max-w-md space-y-6">
 
+        {/* Title */}
         <div className="text-center space-y-2">
           <div className="flex justify-center gap-4 text-4xl mb-2">
             <span>♠</span>
@@ -177,10 +89,15 @@ export default function Home() {
           </p>
         </div>
 
+        {/* Error */}
         {error && (
           <div
             className="px-4 py-3 rounded-xl text-sm text-center"
-            style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.4)', color: '#fca5a5' }}
+            style={{
+              background: 'rgba(220,38,38,0.15)',
+              border: '1px solid rgba(220,38,38,0.4)',
+              color: '#fca5a5',
+            }}
           >
             {error}
           </div>
@@ -196,13 +113,18 @@ export default function Home() {
           }}
         >
           <h2 className="font-bold text-lg" style={{ color: '#FFD700' }}>🏠 Create Room</h2>
+
           <input
             className="w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 outline-none"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(139,105,20,0.4)' }}
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(139,105,20,0.4)',
+            }}
             placeholder="Your name"
             value={hostName}
             onChange={(e) => setHostName(e.target.value)}
           />
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs uppercase tracking-widest block mb-1" style={{ color: '#8B6914' }}>
@@ -210,7 +132,10 @@ export default function Home() {
               </label>
               <select
                 className="w-full px-3 py-2 rounded-xl text-white outline-none"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(139,105,20,0.4)' }}
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(139,105,20,0.4)',
+                }}
                 value={bootAmount}
                 onChange={(e) => setBootAmount(Number(e.target.value))}
               >
@@ -226,7 +151,10 @@ export default function Home() {
               </label>
               <select
                 className="w-full px-3 py-2 rounded-xl text-white outline-none"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(139,105,20,0.4)' }}
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(139,105,20,0.4)',
+                }}
                 value={startingCoins}
                 onChange={(e) => setStartingCoins(Number(e.target.value))}
               >
@@ -237,6 +165,7 @@ export default function Home() {
               </select>
             </div>
           </div>
+
           <button
             type="button"
             onClick={createRoom}
@@ -265,20 +194,29 @@ export default function Home() {
           }}
         >
           <h2 className="font-bold text-lg" style={{ color: '#FFD700' }}>🔗 Join Room</h2>
+
           <input
             className="w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 outline-none"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(139,105,20,0.4)' }}
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(139,105,20,0.4)',
+            }}
             placeholder="Your name"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
           />
+
           <input
             className="w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 outline-none uppercase font-mono"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(139,105,20,0.4)' }}
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(139,105,20,0.4)',
+            }}
             placeholder="Room code (e.g. AB12CD34)"
             value={roomId}
             onChange={(e) => setRoomId(e.target.value.toUpperCase())}
           />
+
           <button
             type="button"
             onClick={joinRoom}
