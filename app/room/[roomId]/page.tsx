@@ -23,28 +23,33 @@ export default function RoomPage() {
     const pname = localStorage.getItem('playerName') ?? ''
     setPlayerId(pid)
 
-    fetch(`/api/room/join`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ roomId, playerName: pname, rejoin: true }),
+    setTimeout(() => {
+  fetch(`/api/room/join`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ roomId, playerName: pname, rejoin: true }),
+  })
+    .then((r) => r.json())
+    .then((data) => {
+      if (data.players) setPlayers(data.players)
+      if (data.status === 'playing') {
+        fetch(`/api/game/state?roomId=${roomId}&playerId=${pid}`)
+          .then((r) => r.json())
+          .then((d) => {
+            if (d.gameState) {
+              setGameState(d.gameState)
+              setStatus('playing')
+              setBetAmount(d.gameState.currentStake)
+              const me = d.gameState.players.find((p: Player) => p.id === pid)
+              if (me?.cards?.length) setMyCards(me.cards)
+            }
+          })
+      }
     })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.players) setPlayers(data.players)
-        if (data.status === 'playing') {
-          fetch(`/api/game/state?roomId=${roomId}&playerId=${pid}`)
-            .then((r) => r.json())
-            .then((d) => {
-              if (d.gameState) {
-                setGameState(d.gameState)
-                setStatus('playing')
-                setBetAmount(d.gameState.currentStake)
-                const me = d.gameState.players.find((p: Player) => p.id === pid)
-                if (me?.cards?.length) setMyCards(me.cards)
-              }
-            })
-        }
-      })
+    .catch(() => {
+      console.log('Room not ready yet')
+    })
+}, 1000)
 
     const channel = pusherClient.subscribe(`room-${roomId}`)
 
