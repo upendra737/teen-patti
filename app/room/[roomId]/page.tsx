@@ -21,27 +21,27 @@ export default function Home() {
     }
   }, [])
 
-  async function createRoom() {
-    if (!hostName.trim()) return setError('Enter your name!')
-    setLoading(true)
-    setError('')
-    try {
-      const res = await fetch('/api/room/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hostName, bootAmount, startingCoins }),
-      })
-      const data = await res.json()
-      if (data.roomId) {
-        localStorage.setItem('playerId', data.playerId)
-        localStorage.setItem('playerName', hostName)
-        router.push(`/room/${data.roomId}`)
-      }
-    } catch {
-      setError('Failed to create room. Try again!')
+ async function createRoom() {
+  if (!hostName.trim()) return setError('Enter your name!')
+  setLoading(true)
+  setError('')
+  try {
+    const res = await fetch('/api/room/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hostName, bootAmount, startingCoins }),
+    })
+    const data = await res.json()
+    if (data.roomId) {
+      localStorage.setItem('playerId', data.playerId)
+      localStorage.setItem('playerName', hostName)
+      window.location.href = `/room/${data.roomId}`
     }
-    setLoading(false)
+  } catch {
+    setError('Failed to create room. Try again!')
   }
+  setLoading(false)
+}
 
   async function joinRoom() {
     if (!playerName.trim()) return setError('Enter your name!')
