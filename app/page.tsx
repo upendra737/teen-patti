@@ -1,10 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export default function Home() {
-  const router = useRouter()
   const [hostName, setHostName] = useState('')
   const [playerName, setPlayerName] = useState('')
   const [roomId, setRoomId] = useState('')
@@ -12,14 +10,6 @@ export default function Home() {
   const [startingCoins, setStartingCoins] = useState(1000)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-
-  useEffect(() => {
-    const path = window.location.pathname
-    const parts = path.split('/')
-    if (parts[1] === 'room' && parts[2]) {
-      setRoomId(parts[2])
-    }
-  }, [])
 
   async function createRoom() {
     if (!hostName.trim()) return setError('Enter your name!')
@@ -35,7 +25,9 @@ export default function Home() {
       if (data.roomId) {
         localStorage.setItem('playerId', data.playerId)
         localStorage.setItem('playerName', hostName)
-        router.push(`/room/${data.roomId}`)
+        window.location.href = `/room/${data.roomId}`
+      } else {
+        setError('Failed to create room. Try again!')
       }
     } catch {
       setError('Failed to create room. Try again!')
@@ -58,7 +50,7 @@ export default function Home() {
       if (data.playerId) {
         localStorage.setItem('playerId', data.playerId)
         localStorage.setItem('playerName', playerName)
-        router.push(`/room/${roomId.toUpperCase()}`)
+        window.location.href = `/room/${roomId.toUpperCase()}`
       } else {
         setError(data.error ?? 'Failed to join room!')
       }
@@ -101,7 +93,11 @@ export default function Home() {
         {error && (
           <div
             className="px-4 py-3 rounded-xl text-sm text-center"
-            style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.4)', color: '#fca5a5' }}
+            style={{
+              background: 'rgba(220,38,38,0.15)',
+              border: '1px solid rgba(220,38,38,0.4)',
+              color: '#fca5a5',
+            }}
           >
             {error}
           </div>
@@ -119,7 +115,7 @@ export default function Home() {
           <h2 className="font-bold text-lg" style={{ color: '#FFD700' }}>🏠 Create Room</h2>
 
           <input
-            className="w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 outline-none transition-all"
+            className="w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 outline-none"
             style={{
               background: 'rgba(255,255,255,0.05)',
               border: '1px solid rgba(139,105,20,0.4)',
